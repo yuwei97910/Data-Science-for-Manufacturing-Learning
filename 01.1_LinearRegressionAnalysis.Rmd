@@ -1,0 +1,62 @@
+---
+title: "01.1LinearRegressionAnalysis.R"
+---
+## MDS 01.1
+## Linear Regression for Wine Quality
+
+### 賴昱瑋 國企四
+
+### Data Source: Paulo Cortez, University of Minho, Guimarães, Portugal, http://www3.dsi.uminho.pt/pcortez
+```{r message=FALSE, warning=FALSE, include=FALSE}
+setwd("~/[Github]/MDS")
+
+library(readr)
+library(dplyr)
+library(stringr)
+library(MASS)
+library(GGally)
+```
+### Summary
+```{r message=FALSE, warning=FALSE, paged.print=TRUE}
+winequality <- read_csv('01.1_winequality.csv')
+attach(winequality)
+
+summary(winequality)
+ggpairs(winequality,
+    upper = list(continuous = wrap("cor", size = 5)))
+```
+
+```{r message=FALSE, warning=FALSE, paged.print=TRUE}
+fit0 <- lm(quality ~ ., data = winequality)
+summary(fit0)
+```
+
+AIC of the regression model
+```{r message=FALSE, warning=FALSE, paged.print=TRUE}
+AIC(fit0)
+```
+
+Test the Normality of the residuals
+```{r message=FALSE, warning=FALSE, paged.print=TRUE}
+plot(quality, residuals(fit0))
+hist(residuals(fit0), 50)
+qqnorm(residuals(fit0), ylab="Residuals")
+qqline(residuals(fit0))
+```
+Reduce variables by stepwise considering AIC of the model
+```{r message=FALSE, warning=FALSE, paged.print=TRUE}
+fit_step <- stepAIC(fit0, direction = "both", 
+                    trace = FALSE)
+summary(fit_step)
+```
+AIC of the reduced model
+```{r message=FALSE, warning=FALSE, paged.print=TRUE}
+AIC(fit_step)
+```
+
+```{r message=FALSE, warning=FALSE, paged.print=TRUE}
+plot(quality, residuals(fit_step))
+hist(residuals(fit_step),50)
+qqnorm(residuals(fit_step), ylab="Residuals")
+qqline(residuals(fit_step))
+```
